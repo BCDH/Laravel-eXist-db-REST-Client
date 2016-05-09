@@ -67,7 +67,7 @@ foreach($result as $xml) {
 #### Result formatting
 
 [sabre/xml](http://sabre.io/xml/reading/) library is used for parsing xml result.
-You can pass an instance of \Sabre\Xml\Service with your own (de)serializers Query request methods
+You can pass an instance of \Sabre\Xml\Service with your own (de)serializers to Query request methods
 
 #### Result example
 
