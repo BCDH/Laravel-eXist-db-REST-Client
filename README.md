@@ -58,10 +58,6 @@ $query->setQuery($q);
 
 $result = $query->get();
 $document = $result->getDocument();
-
-foreach($result as $xml) {    
-    var_dump($xml->somePredicateAttribute);
-}
 ```
 
 #### Result formatting
