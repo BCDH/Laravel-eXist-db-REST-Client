@@ -16,18 +16,7 @@ class ExistDbRestClient {
         if (function_exists('config')) {
             $this->options = config("exist-db");
         } else {
-            $this->options = array(
-                'uri' => 'http://localhost:8080/exist/rest/',
-
-                'user' => 'admin',
-                'password' => 'admin',
-
-                'xsl' => 'no',
-                'indent' => 'yes',
-                'howMany' => 0,
-                'start' => 1,
-                'wrap' => 'yes'
-            );
+            $this->options = $options;
         }
 
         $this->client = new GuzzleClient();

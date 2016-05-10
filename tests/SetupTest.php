@@ -24,7 +24,16 @@ class SetupTest extends \PHPUnit_Framework_TestCase
     public static function setupBeforeClass()
     {
         self::$config = array(
-            'uri' => 'http://admin:admin@localhost:8080/exist/rest/'
+            'uri' => 'http://localhost:8080/exist/rest/',
+
+            'user' => 'admin',
+            'password' => 'admin',
+
+            'xsl' => 'no',
+            'indent' => 'yes',
+            'howMany' => 0,
+            'start' => 1,
+            'wrap' => 'yes'
         );
 
         self::$connection = new ExistDbRestClient(self::$config);

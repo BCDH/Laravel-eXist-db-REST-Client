@@ -49,10 +49,9 @@ sudo apt-get install php5-xsl
 ```php
 use BCDH\ExistDbRestClient\ExistDbRestClient;
 
-$config = ['uri' => 'http://admin:admin@localhost:8080/exist/rest/'];
 $q = 'for $cd in /CD[./ARTIST=$artist] return $cd';
 
-$connection = new ExistDbRestClient($config);
+$connection = new ExistDbRestClient();
 
 $query = $connection->prepareQuery();
 $query->bindVariable('artist', 'Bonnie Tyler');
