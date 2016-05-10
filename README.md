@@ -1,4 +1,4 @@
-Laravel-RESTored-eXist-Client
+Laravel eXist-db REST Client
 =============================
 
 A Laravel client for querying and transforming results from eXist-db via REST API.
