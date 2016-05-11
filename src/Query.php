@@ -203,7 +203,7 @@ class Query {
         if ($this->client->getUri() != null) {
             $url = $this->client->getUri();
         } else {
-            $url = $this->client->getProtocol() . "://" . $this->client->getHost() .
+            $url = $this->client->getProtocol() . "://" . $this->client->getHost() . ":" .
                 $this->client->getPort() . "/" . $this->client->getPath() . "/";
         }
 

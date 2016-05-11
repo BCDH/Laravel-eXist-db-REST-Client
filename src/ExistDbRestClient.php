@@ -35,8 +35,16 @@ class ExistDbRestClient {
         return $this->client->send($req);
     }
 
+    private function getOptionsValue($key) {
+        if(!isset($this->options[$key])) {
+            return null;
+        }
+
+        return $this->options[$key];
+    }
+
     public function getUser() {
-        return $this->options['user'];
+        return $this->getOptionsValue('user');
     }
 
     public function setUser($user) {
@@ -44,7 +52,7 @@ class ExistDbRestClient {
     }
 
     public function getPassword() {
-        return $this->options['password'];
+        return $this->getOptionsValue('password');
     }
 
     public function setPassword($user) {
@@ -52,7 +60,7 @@ class ExistDbRestClient {
     }
 
     public function getUri() {
-        return $this->options['uri'];
+        return $this->getOptionsValue('uri');
     }
 
     public function setUri($uri) {
@@ -60,7 +68,7 @@ class ExistDbRestClient {
     }
 
     public function getProtocol() {
-        return $this->options['protocol'];
+        return $this->getOptionsValue('protocol');
     }
 
     public function setProtocol($protocol) {
@@ -68,7 +76,7 @@ class ExistDbRestClient {
     }
 
     public function getHost() {
-        return $this->options['host'];
+        return $this->getOptionsValue('host');
     }
 
     public function setHost($host) {
@@ -76,7 +84,7 @@ class ExistDbRestClient {
     }
 
     public function getPort() {
-        return $this->options['port'];
+        return $this->getOptionsValue('port');
     }
 
     public function setPort($port) {
@@ -84,7 +92,7 @@ class ExistDbRestClient {
     }
 
     public function getPath() {
-        return $this->options['path'];
+        return $this->getOptionsValue('path');
     }
 
     public function setPath($path) {
@@ -92,7 +100,7 @@ class ExistDbRestClient {
     }
 
     public function getCollection() {
-        return $this->options['collection'];
+        return $this->getOptionsValue('collection');
     }
 
     public function setCollection($collection) {
@@ -100,7 +108,7 @@ class ExistDbRestClient {
     }
 
     public function getResource() {
-        return $this->options['resource'];
+        return $this->getOptionsValue('resource');
     }
 
     public function setResource($resource) {
@@ -108,7 +116,7 @@ class ExistDbRestClient {
     }
 
     public function getHowMany() {
-        return $this->options['howMany'];
+        return $this->getOptionsValue('howMany');
     }
 
     public function setHowMany($howMany) {
@@ -116,7 +124,7 @@ class ExistDbRestClient {
     }
 
     public function getXsl() {
-        return $this->options['xsl'];
+        return $this->getOptionsValue('xsl');
     }
 
     public function setXsl($xsl) {
@@ -124,7 +132,7 @@ class ExistDbRestClient {
     }
 
     public function getIndent() {
-        return $this->options['indent'];
+        return $this->getOptionsValue('indent');
     }
 
     public function setIndent($indent) {
@@ -132,7 +140,7 @@ class ExistDbRestClient {
     }
 
     public function getStart() {
-        return $this->options['start'];
+        return $this->getOptionsValue('start');
     }
 
     public function setStart($start) {
@@ -140,7 +148,7 @@ class ExistDbRestClient {
     }
 
     public function getWrap() {
-        return $this->options['wrap'];
+        return $this->getOptionsValue('wrap');
     }
 
     public function setWrap($wrap) {
