@@ -27,7 +27,12 @@ class ExistDbRestClient {
     }
 
     public function execute(Request $r) {
-        return $this->client->request($r->method, $r->uri, $r->options);
+        if(method_exists($this->client, "request")) {
+            return $this->client->request($r->method, $r->uri, $r->options);
+        }
+
+        $req = $this->client->createRequest($r->method, $r->uri, $r->options);
+        return $this->client->send($req);
     }
 
     public function getUser() {
