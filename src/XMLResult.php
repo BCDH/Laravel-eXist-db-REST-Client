@@ -14,6 +14,11 @@ class XMLResult implements ResultInterface {
     private $document;
 
     /**
+     * @var string
+     */
+    private $rawResult;
+
+    /**
      * @var Service Parser service
      * @link http://sabre.io/xml/reading/
      */
@@ -25,6 +30,8 @@ class XMLResult implements ResultInterface {
         } else {
             $this->service = $parserService;
         }
+
+        $this->rawResult = $documentScalar;
 
         $this->document = $this->service->parse($documentScalar);
     }
@@ -78,5 +85,12 @@ class XMLResult implements ResultInterface {
      */
     public function getDocument() {
         return $this->document;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRawResult() {
+        return $this->rawResult;
     }
 }
