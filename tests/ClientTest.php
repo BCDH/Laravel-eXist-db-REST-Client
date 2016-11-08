@@ -1,5 +1,8 @@
 <?php namespace BCDH\ExistDbRestClient;
 
+use Sabre\Xml\Reader;
+use Sabre\Xml\Service;
+
 class ClientTest extends SetupTest {
     public function testInsertData() {
         parent::insertData();
@@ -168,4 +171,109 @@ class ClientTest extends SetupTest {
         $this->assertEquals('1', $isFavorite);
     }
 
+    /**
+     * @depends testInsertData
+     */
+    public function testSabreParser() {
+        self::$connection->setHowMany(0);
+        self::$connection->setWrap("no");
+
+        $xql = 'for $cd in /CD[./ARTIST=$artist] return $cd';
+
+        $query = self::$connection->prepareQuery();
+        $query->setQuery($xql);
+        $query->setCollection(self::$collectionName);
+        $query->bindVariable('artist', 'Bob Dylan');
+
+        $service = $this->getSabreParser();
+
+        $result = $query->get($service)->getDocument();
+
+        $count = count($result);
+
+        if ($count != 1) {
+            $this->assertTrue(false, "Wrong entries found: $count");
+        }
+
+        /** @var CD $object */
+        $object = $result[0]['value'];
+
+        $this->assertEquals($object->artist, "Bob Dylan");
+    }
+
+    /**
+     * @depends testInsertData
+     */
+    public function testSabreParserMultiple() {
+        self::$connection->setHowMany(0);
+        self::$connection->setWrap("no");
+
+        $xql = 'for $cd in /CD[./PRICE < $price] return $cd';
+
+        /** @var Query $query */
+        $query = self::$connection->prepareQuery();
+        $query->setQuery($xql);
+        $query->setCollection(self::$collectionName);
+        $query->bindVariable("price", 8.70);
+
+        $service = $this->getSabreParser();
+
+        $results = $query->get($service)->getDocument();
+
+        $count = count($results);
+        $expected = 10;
+
+        $this->assertEquals($expected, $count);
+
+        /** @var CD $object */
+        $object = $results[5]['value'];
+
+        $this->assertEquals($object->artist, "The Communards");
+    }
+
+    private function getSabreParser() {
+        $service = new Service();
+        $service->elementMap = [
+            '{}' => function(Reader $reader) {
+                return \Sabre\Xml\Deserializer\repeatingElements($reader, '{}CD');
+            },
+            '{}CD' => function($reader) {
+                $cd = new CD();
+                // Borrowing a parser from the KeyValue class.
+                $keyValue = \Sabre\Xml\Deserializer\keyValue($reader, '');
+
+                if (isset($keyValue['TITLE'])) {
+                    $cd->title = $keyValue['TITLE'];
+                }
+                if (isset($keyValue['ARTIST'])) {
+                    $cd->artist = $keyValue['ARTIST'];
+                }
+                if (isset($keyValue['COUNTRY'])) {
+                    $cd->country = $keyValue['COUNTRY'];
+                }
+                if (isset($keyValue['COMPANY'])) {
+                    $cd->company = $keyValue['COMPANY'];
+                }
+                if (isset($keyValue['PRICE'])) {
+                    $cd->price = $keyValue['PRICE'];
+                }
+                if (isset($keyValue['YEAR'])) {
+                    $cd->year = $keyValue['YEAR'];
+                }
+
+                return $cd;
+            },
+        ];
+
+        return $service;
+    }
+}
+
+class CD {
+    public $title;
+    public $artist;
+    public $country;
+    public $company;
+    public $price;
+    public $year;
 }
