@@ -11,7 +11,7 @@ jobs:
     env:
       EXISTDB_URI: http://localhost:8080/exist/rest/
       EXISTDB_USER: admin
-      EXISTDB_PASSWORD: admin
+      EXISTDB_PASSWORD: ""
 
     steps:
       - name: Check out repository
