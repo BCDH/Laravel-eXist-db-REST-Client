@@ -61,16 +61,16 @@ namespace BCDH\ExistDbRestClient {
             $publishes = $this->getServiceProviderStaticProperty('publishes');
             $publishGroups = $this->getServiceProviderStaticProperty('publishGroups');
             $providerClass = ExistDbServiceProvider::class;
-            $sourcePath = dirname(__DIR__) . '/config/exist-db.php';
+            $providerPublishes = $publishes[$providerClass];
+            $destinationPath = __DIR__ . '/exist-db.php';
+            $sourcePath = array_search($destinationPath, $providerPublishes, true);
 
             $this->assertArrayHasKey($providerClass, $publishes);
-            $this->assertSame(
-                [__DIR__ . '/exist-db.php'],
-                array_values($publishes[$providerClass])
-            );
+            $this->assertNotFalse($sourcePath);
+            $this->assertSame([$destinationPath], array_values($providerPublishes));
             $this->assertArrayHasKey('config', $publishGroups);
             $this->assertArrayHasKey($sourcePath, $publishGroups['config']);
-            $this->assertSame(__DIR__ . '/exist-db.php', $publishGroups['config'][$sourcePath]);
+            $this->assertSame($destinationPath, $publishGroups['config'][$sourcePath]);
         }
 
         private function resetPublishedPaths() {
@@ -105,6 +105,10 @@ namespace BCDH\ExistDbRestClient {
 
         public function configurationIsCached() {
             return false;
+        }
+
+        public function make($abstract) {
+            return $this->offsetGet($abstract);
         }
 
         public function offsetExists($offset) {
