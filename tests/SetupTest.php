@@ -26,10 +26,10 @@ class SetupTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         self::$config = array(
-            'uri' => 'http://localhost:8080/exist/rest/',
+            'uri' => getenv('EXISTDB_URI') ?: 'http://localhost:8080/exist/rest/',
 
-            'user' => 'admin',
-            'password' => 'admin',
+            'user' => getenv('EXISTDB_USER') ?: 'admin',
+            'password' => getenv('EXISTDB_PASSWORD') ?: 'admin',
 
             'xsl' => 'no',
             'indent' => 'yes',
