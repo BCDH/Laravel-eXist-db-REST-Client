@@ -4,7 +4,9 @@
  * Class SetupTest
  * @package BCDH\ExistDbRestClient
  */
-class SetupTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SetupTest extends TestCase
 {
     /**
      * @var ExistDbRestClient
@@ -21,7 +23,7 @@ class SetupTest extends \PHPUnit_Framework_TestCase
      */
     public static $collectionName = "CDCatalog";
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$config = array(
             'uri' => 'http://localhost:8080/exist/rest/',
@@ -50,10 +52,6 @@ class SetupTest extends \PHPUnit_Framework_TestCase
         }
     }
 */
-    public function tearDown() {
-        echo "Time elapsed: " . $this->getTestResultObject()->time(). PHP_EOL;
-    }
-
     public function testTrue() {
         $this->assertTrue(1 == 1);
     }

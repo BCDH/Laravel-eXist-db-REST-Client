@@ -26,7 +26,7 @@ class XLSTransformationsTest extends SetupTest {
         $html = $result->transform(__DIR__ . '/xml/cd_catalog_simplified.xsl', $singleCd);
         $expected = $this->getExpectedXml($result->getDocument());
 
-        $this->assertTrue(str_contains($html, $expected));
+        $this->assertTrue(strpos($html, $expected) !== false);
     }
 
     /**
@@ -49,7 +49,7 @@ class XLSTransformationsTest extends SetupTest {
         $html = $result->transform(__DIR__ . '/xml/cd_catalog_simplified.xsl', $document, $rootTagName);
         $expected = $this->getExpectedXml($document);
 
-        $this->assertTrue(str_contains($html, $expected));
+        $this->assertTrue(strpos($html, $expected) !== false);
     }
 
     private function getExpectedXml($results) {
