@@ -39,12 +39,6 @@ jobs:
           docker logs existdb
           exit 1
 
-      - name: Set admin password
-        run: |
-          docker exec existdb \
-            java org.exist.start.Main client --no-gui -l -u admin -P "" \
-            -x "sm:passwd('admin','${EXISTDB_PASSWORD}')"
-
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
 
