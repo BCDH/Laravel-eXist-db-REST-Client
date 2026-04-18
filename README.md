@@ -17,7 +17,9 @@ Install the package with Composer:
 composer require bcdh/exist-db-rest-client
 ```
 
-Register the service provider in `config/app.php`:
+Laravel package discovery will register the service provider automatically.
+
+If you are integrating the package into an older Laravel application without package discovery, register the provider manually in `config/app.php`:
 
 ```php
 BCDH\ExistDbRestClient\ExistDbServiceProvider::class,
@@ -26,7 +28,7 @@ BCDH\ExistDbRestClient\ExistDbServiceProvider::class,
 Publish the package configuration:
 
 ```bash
-php artisan vendor:publish
+php artisan vendor:publish --tag=config
 ```
 
 Then adjust `config/exist-db.php`:
