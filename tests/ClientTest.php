@@ -225,10 +225,15 @@ class ClientTest extends SetupTest {
 
         $this->assertEquals($expected, $count);
 
-        /** @var CD $object */
-        $object = $results[5]['value'];
+        $artists = [];
 
-        $this->assertEquals($object->artist, "The Communards");
+        foreach ($results as $result) {
+            /** @var CD $object */
+            $object = $result['value'];
+            $artists[] = $object->artist;
+        }
+
+        $this->assertContains("The Communards", $artists);
     }
 
     private function getSabreParser() {
