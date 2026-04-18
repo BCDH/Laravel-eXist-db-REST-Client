@@ -28,7 +28,7 @@ BCDH\ExistDbRestClient\ExistDbServiceProvider::class,
 Publish the package configuration:
 
 ```bash
-php artisan vendor:publish --tag=config
+php artisan vendor:publish --provider="BCDH\ExistDbRestClient\ExistDbServiceProvider"
 ```
 
 Then adjust `config/exist-db.php`:
