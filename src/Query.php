@@ -176,6 +176,10 @@ class Query {
      * @return string
      */
     public function getFormattedQuery() {
+        if ($this->query === null) {
+            return "";
+        }
+
         $query = $this->query;
 
         $replace = array();

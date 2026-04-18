@@ -12,7 +12,7 @@ namespace {
 
 namespace BCDH\ExistDbRestClient {
 
-    use ArrayAccess;
+    use ArrayObject;
     use Illuminate\Support\ServiceProvider;
     use PHPUnit\Framework\TestCase;
 
@@ -94,13 +94,11 @@ namespace BCDH\ExistDbRestClient {
         }
     }
 
-    class FakeApplication implements ArrayAccess {
-        private $items;
-
+    class FakeApplication extends ArrayObject {
         public function __construct($config = []) {
-            $this->items = [
+            parent::__construct([
                 'config' => new FakeConfigRepository($config),
-            ];
+            ]);
         }
 
         public function configurationIsCached() {
@@ -108,23 +106,7 @@ namespace BCDH\ExistDbRestClient {
         }
 
         public function make($abstract) {
-            return $this->offsetGet($abstract);
-        }
-
-        public function offsetExists($offset) {
-            return isset($this->items[$offset]);
-        }
-
-        public function offsetGet($offset) {
-            return $this->items[$offset];
-        }
-
-        public function offsetSet($offset, $value) {
-            $this->items[$offset] = $value;
-        }
-
-        public function offsetUnset($offset) {
-            unset($this->items[$offset]);
+            return $this[$abstract];
         }
     }
 
