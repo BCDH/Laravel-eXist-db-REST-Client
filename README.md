@@ -2,7 +2,20 @@
 
 A small Laravel-friendly client for querying eXist-db over its REST API, parsing XML responses, and applying XSLT transformations.
 
+## Version compatibility
+
+- `1.1.x`: Laravel 8
+- `1.2.x` (`v1.2.0`): Laravel 9
+- `1.3.x`: planned for Laravel 10
+- `2.x`: planned for Laravel 11+
+
+The latest released bridge line is `1.2.x` for Laravel 9.
+
+The default branch, `master`, is the development branch. Use a tagged release when installing the package in an application.
+
 ## Requirements
+
+Current `master` branch requirements:
 
 - PHP `^7.2|^8.0`
 - Laravel / `illuminate/support` `^5.5|^6.0|^7.0|^8.0`
@@ -11,10 +24,16 @@ A small Laravel-friendly client for querying eXist-db over its REST API, parsing
 
 ## Installation
 
-Install the package with Composer:
+Install the version that matches your Laravel line:
 
 ```bash
-composer require bcdh/exist-db-rest-client
+composer require bcdh/exist-db-rest-client:^1.2   # Laravel 9
+```
+
+For Laravel 8, use:
+
+```bash
+composer require bcdh/exist-db-rest-client:^1.1
 ```
 
 Laravel package discovery will register the service provider automatically.
