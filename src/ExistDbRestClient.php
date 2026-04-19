@@ -88,7 +88,7 @@ class ExistDbRestClient {
     }
 
     public function setPort($port) {
-        $this->options['port '] = $port;
+        $this->options['port'] = $port;
     }
 
     public function getPath() {

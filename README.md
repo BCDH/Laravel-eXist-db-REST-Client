@@ -1,110 +1,184 @@
-Laravel eXist-db REST Client
-=============================
+# Laravel eXist-db REST Client
 
-A Laravel client for querying and transforming results from eXist-db via REST API.
+A Laravel-friendly client for querying eXist-db over its REST API, parsing XML responses, and applying XSLT transformations.
 
-##  Requirements:
+## Version compatibility
 
-- Laravel 5
-- PHP 5.5
-- PHP XSLT extension
+- `1.1.x`: Laravel 8
+- `1.2.x`: Laravel 9
+- `1.3.x`: Laravel 10
+- `2.x`: Laravel 11+
+
+This branch is the `1.2.x` line for Laravel 9.
+
+## Requirements
+
+- PHP `^8.0.2`
+- Laravel / `illuminate/support` `^9.0`
+- PHP XSL extension for XSLT transformations
+- An accessible eXist-db REST endpoint
+
+## Installation
+
+Install the package with Composer:
+
 ```bash
-sudo apt-get install php5-xsl
+composer require bcdh/exist-db-rest-client:^1.2
 ```
 
-## Installing
+Laravel package discovery will register the service provider automatically.
 
-####1. Add the service provider to your config/app.php:
+If you are integrating the package into an older application without package discovery, register the provider manually in `config/app.php`:
 
-    BCDH\ExistDbRestClient\ExistDbServiceProvider::class
+```php
+BCDH\ExistDbRestClient\ExistDbServiceProvider::class,
+```
 
-####2. Publish your configuration file:
-    
-    php artisan vendor:publish
-    
-####3. Edit your connection credentials in `config/exist-db.php`
+Publish the package configuration:
 
-    [
-        'user'          => 'admin',
-        'password'      => 'admin',
-    
-        'protocol'      => 'http',
-        'host'          => 'localhost',
-        'port'          => 8080,
-        'path'          => 'exist/rest',
-    
-        /* alternatively, you can specify the URI as a whole in the form */
-        // 'uri'=>'http://localhost:8080/exist/rest/'
-    
-        'xsl'           => 'no',
-        'indent'        => 'yes',
-        'howMany'       => 10,
-        'start'         => 1,
-        'wrap'          => 'yes'
-    ]
-    
+```bash
+php artisan vendor:publish --provider="BCDH\ExistDbRestClient\ExistDbServiceProvider"
+```
 
-## Usage 
+Then adjust `config/exist-db.php`:
+
+```php
+return [
+    'user' => 'admin',
+    'password' => 'admin',
+
+    'protocol' => 'http',
+    'host' => 'localhost',
+    'port' => 8080,
+    'path' => 'exist/rest',
+
+    // Alternatively, provide the full base URI.
+    // 'uri' => 'http://localhost:8080/exist/rest/',
+
+    'xsl' => 'no',
+    'indent' => 'yes',
+    'howMany' => 10,
+    'start' => 1,
+    'wrap' => 'yes',
+];
+```
+
+## Basic usage
 
 ```php
 use BCDH\ExistDbRestClient\ExistDbRestClient;
 
-$q = 'for $cd in /CD[./ARTIST=$artist] return $cd';
+$xquery = 'for $cd in /CD[./ARTIST = $artist] return $cd';
 
-$connection = new ExistDbRestClient();
+$client = new ExistDbRestClient();
+$query = $client->prepareQuery();
 
-$query = $connection->prepareQuery();
+$query->setCollection('CDCatalog');
+$query->setQuery($xquery);
 $query->bindVariable('artist', 'Bonnie Tyler');
-$query->setCollection("CDCatalog");
-$query->setQuery($q);
 
 $result = $query->get();
 $document = $result->getDocument();
 ```
 
-#### Result formatting
+`getDocument()` returns the parsed XML result. `getRawResult()` returns the raw XML string from eXist-db.
 
-[sabre/xml](http://sabre.io/xml/reading/) library is used for parsing xml result.
-You can pass an instance of \Sabre\Xml\Service with your own (de)serializers to Query request methods
+## Using the client outside Laravel
 
-#### Result example
+You can also pass configuration directly:
 
 ```php
-array(
-    array(
-        'name' => '{}CD',
-        'value' => array(
-            0 => array(
-                'name' => '{}TITLE',
-                'value' => 'Empire Burlesque',
-                'attributes' => array(),
-            ),
-            1 => array(
-                'name' => '{}ARTIST',
-                'value' => 'Bob Dylan',
-                'attributes' => array(),
-            ),
-            2 => array(
-                'name' => '{}COUNTRY',
-                'value' => 'USA',
-                'attributes' => array(),
-            ),
-            3 => array(
-                'name' => '{}COMPANY',
-                'value' => 'Columbia',
-                'attributes' => array(),
-            )
-        ),
-        'attributes' =>  array (
-            'favourite' => '1',
-        ),
-    ),
-);
+use BCDH\ExistDbRestClient\ExistDbRestClient;
+
+$client = new ExistDbRestClient([
+    'uri' => 'http://localhost:8080/exist/rest/',
+    'user' => 'admin',
+    'password' => 'admin',
+    'xsl' => 'no',
+    'indent' => 'yes',
+    'howMany' => 0,
+    'start' => 1,
+    'wrap' => 'yes',
+]);
 ```
 
-## XLS transformations
+## Query helpers
 
-- Single result
+`Query` supports:
+
+- `setQuery($xquery)` for inline XQuery
+- `setStoredQuery($path)` for stored XQuery resources
+- `setCollection($collection)`
+- `setResource($resource)`
+- `bindVariable($name, $value)` for XQuery variable substitution
+- `bindParam($name, $value)` for request parameters
+- `setBody($body)` for request payloads
+- `get()`, `post()`, `put()`, and `delete()`
+
+Example with a stored query and request parameter:
+
+```php
+$query = $client->prepareQuery();
+$query->setStoredQuery('cd.xql');
+$query->bindParam('price', 7.9);
+
+$result = $query->get();
+```
+
+Example uploading XML into a collection:
+
+```php
+$query = $client->prepareQuery();
+$query->setCollection('CDCatalog');
+$query->setResource('new-record.xml');
+$query->setBody($xml);
+
+$query->put();
+```
+
+## Result parsing
+
+Results are parsed with [sabre/xml](http://sabre.io/xml/reading/). You can pass your own `Sabre\Xml\Service` instance to any request method:
+
+```php
+use Sabre\Xml\Service;
+
+$service = new Service();
+
+$result = $query->get($service);
+$document = $result->getDocument();
+```
+
+Typical parsed output looks like this:
+
+```php
+[
+    [
+        'name' => '{}CD',
+        'value' => [
+            [
+                'name' => '{}TITLE',
+                'value' => 'Empire Burlesque',
+                'attributes' => [],
+            ],
+            [
+                'name' => '{}ARTIST',
+                'value' => 'Bob Dylan',
+                'attributes' => [],
+            ],
+        ],
+        'attributes' => [
+            'favourite' => '1',
+        ],
+    ],
+]
+```
+
+## XSLT transformations
+
+`XMLResult::transform()` applies an XSL stylesheet to either the full document or a selected fragment.
+
+Transform a single result node:
 
 ```php
 $result = $query->get();
@@ -114,12 +188,31 @@ $singleCd = $document[0];
 $html = $result->transform(__DIR__ . '/xml/cd_catalog_simplified.xsl', $singleCd);
 ```
 
-- Result
+Transform a collection of nodes with a custom root tag:
 
 ```php
 $result = $query->get();
 $document = $result->getDocument();
-$rootTagName = '{}catalog';
 
-$html = $result->transform(__DIR__ . '/xml/cd_catalog_simplified.xsl', $document, $rootTagName);
+$html = $result->transform(
+    __DIR__ . '/xml/cd_catalog_simplified.xsl',
+    $document,
+    '{}catalog'
+);
+```
+
+## Running tests
+
+The test suite expects a local eXist-db instance at `http://localhost:8080/exist/rest/` with the default `admin/admin` credentials.
+
+You can override the connection with environment variables:
+
+- `EXISTDB_URI`
+- `EXISTDB_USER`
+- `EXISTDB_PASSWORD`
+
+Run:
+
+```bash
+composer test
 ```
