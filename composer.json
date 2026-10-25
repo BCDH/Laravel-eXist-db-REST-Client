@@ -14,7 +14,7 @@
     "license": "GPL-2.0-only",
     "require": {
         "php": "^8.2",
-        "illuminate/support": "^11.0 || ^12.0",
+        "illuminate/support": "^11.0 || ^12.0 || ^13.0",
         "guzzlehttp/guzzle": "^7.0",
         "sabre/xml": "^3.0"
     },
@@ -43,7 +43,7 @@
             ]
         },
         "branch-alias": {
-            "dev-2.x": "2.1.x-dev"
+            "dev-2.x": "2.2.x-dev"
         }
     },
     "minimum-stability": "stable"
