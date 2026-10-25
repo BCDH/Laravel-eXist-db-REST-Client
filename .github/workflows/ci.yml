@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['8.1', '8.3']
+
+    env:
+      EXISTDB_URI: http://localhost:8080/exist/rest/
+      EXISTDB_USER: admin
+      EXISTDB_PASSWORD: ""
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, simplexml, xsl
+          coverage: none
+
+      - name: Start eXist-db
+        run: |
+          docker run -d --name existdb -p 8080:8080 existdb/existdb:6.4.1
+
+      - name: Wait for eXist-db
+        run: |
+          for i in $(seq 1 60); do
+            if curl --silent --fail http://localhost:8080/exist/rest/ > /dev/null; then
+              exit 0
+            fi
+            sleep 5
+          done
+          docker logs existdb
+          exit 1
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run test suite
+        run: composer test
